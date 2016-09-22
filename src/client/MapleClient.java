@@ -109,7 +109,7 @@ public class MapleClient {
 	private byte gender = -1;
 	private boolean disconnecting = false;
 	private final Lock mutex = new ReentrantLock(true);
-	private int votePoints;
+	//private int votePoints;
 	private int voteTime = -1;
 	private long lastNpcClick;
 	private long sessionId;
@@ -1046,7 +1046,7 @@ public class MapleClient {
 		return disconnectForBeingAFaggot;
 	}
 
-	public int getVotePoints(){
+	/*public int getVotePoints(){
 		int points = 0;
 		try {
 			PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT `votes` FROM accounts WHERE id = ?");
@@ -1091,7 +1091,7 @@ public class MapleClient {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	public final Lock getLock() {
 		return mutex;
