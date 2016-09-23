@@ -79,4 +79,5 @@ function action(mode, type, selection) {
             cm.setFace(colors[selection]);
         cm.dispose();
     }
+	cm.dispose();
 }
