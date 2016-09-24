@@ -23,7 +23,7 @@
  * @Name         NimaKIN
  * @Author:      Signalize
  * @NPC:         9900000
- * @Purpose:     Hair/Face/Eye Changer
+ * @Purpose:     Hair/Face/Eye Changer -- May set job as GM too
  * @GMSPurpose:  Sets one's job as a GM.
  * @Map:         180000000
  */
@@ -45,6 +45,10 @@ function start() {
 
 function action(mode, type, selection) {
     status++;
+    if (mode != 1){
+        cm.dispose();
+        return;
+    }
     if (status == 1) {
         beauty = selection + 1;
         if (selection == 0)
@@ -65,6 +69,8 @@ function action(mode, type, selection) {
             for(var i = 0; i < 9; i++)
                 colors.push(cm.getPlayer().getFace() + (i*100));
             cm.sendStyle("Pick one?", colors);
+        } else if (selection == 7) {
+            cm.dispose();
         }
     } else if (status == 2){
         if (beauty == 1)
@@ -79,5 +85,4 @@ function action(mode, type, selection) {
             cm.setFace(colors[selection]);
         cm.dispose();
     }
-	cm.dispose();
 }

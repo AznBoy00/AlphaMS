@@ -33,10 +33,10 @@ function action(mode, type, selection) {
         } else if (status == 1) {
             if (selection == 1) {
                 if(cm.haveItem(leaf, 1)) {
-					cm.getPlayer().getCashShop().gainCash(1, 5000);
-					cm.getPlayer().announce(MaplePacketCreator.earnTitleMessage("You have earned 5,000 NX"));
+					cm.getPlayer().getCashShop().gainCash(1, 2000);
+					cm.getPlayer().announce(MaplePacketCreator.earnTitleMessage("You have earned 2,000 NX"));
                     cm.gainItem(leaf, -1);
-                    cm.sendOk("Here is your 5,000 NX!");
+                    cm.sendOk("Here is your 2,000 NX!");
 					cm.logLeaf("5k NX");
                 } else {
                     cm.sendOk("Sorry, you don't have a maple leaf!");

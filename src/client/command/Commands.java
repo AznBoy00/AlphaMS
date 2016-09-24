@@ -317,7 +317,7 @@ public class Commands {
 		switch (sub[0]) {
 		case "help":
 		case "commands":
-			player.yellowMessage("After you vote, talk to Rooney to get a leaf and redeem it for prizes!");
+			player.yellowMessage("ArchonMS Player Commands:");
 			player.message("@dispose: Fixes your character if it is stuck.");
 			player.message("@online: Displays a list of all online players.");
 			player.message("@time: Displays the current server time.");
@@ -470,22 +470,22 @@ public class Commands {
 			player.message(">>Total DROP Rate: " + player.getDropRate() + "x");
 
 			player.yellowMessage("MESO RATE");
-			player.message(">>Base MESO Rate: " + c.getWorldServer().getMesoRate() + "x");
-			player.message(">>Guild MESO Rate bonus: " + (player.getGuild() != null ? "1" : "0") + "x");
-			player.message(">>Total MESO Rate: " + player.getMesoRate() + "x");
+			player.message(">>MESO Rate: " + c.getWorldServer().getMesoRate() + "x");
+			//player.message(">>Guild MESO Rate bonus: " + (player.getGuild() != null ? "1" : "0") + "x");
+			//player.message(">>Total MESO Rate: " + player.getMesoRate() + "x");
 
 			player.yellowMessage("EXP RATE");
-			player.message(">>Base Server EXP Rate: " + ServerConstants.EXP_RATE + "x");
+			player.message(">>EXP Rate: " + ServerConstants.EXP_RATE + "x");
 			if(c.getWorldServer().getExpRate() > ServerConstants.EXP_RATE) {
 				player.message(">>Event EXP bonus: " + (c.getWorldServer().getExpRate() - ServerConstants.EXP_RATE) + "x");
 			}
-			player.message(">>Voted EXP bonus: " + (c.hasVotedAlready() ? "1x" : "0x (If you vote now, you will earn an additional 1x EXP!)"));
-			player.message(">>Total EXP Rate: " + player.getExpRate() + "x");
+			//player.message(">>Voted EXP bonus: " + (c.hasVotedAlready() ? "1x" : "0x (If you vote now, you will earn an additional 1x EXP!)"));
+			//player.message(">>Total EXP Rate: " + player.getExpRate() + "x");
 			
-			if (player.getLevel() < 10) { 
+			/*if (player.getLevel() < 10) { 
 				player.message("Players under level 10 always have 1x exp.");
-			}
-			break;
+			}*/
+                        break;
 		case "online":
 			for (Channel ch : Server.getInstance().getChannelsFromWorld(player.getWorld())) {
 				player.yellowMessage("Players in Channel " + ch.getId() + ":");
@@ -597,6 +597,9 @@ public class Commands {
 			} 
 			break;
                 case "spinel":
+                    if (player.isBeginnerJob()) {
+                        player.dropMessage("You cannot use this command as a beginner! But you can go see Spinel in any town! Happy Mapling!");
+                    }
                     NPCScriptManager.getInstance().start(c, 9000020, null, null);
                     break;
                 case "potshop":
@@ -762,21 +765,36 @@ public class Commands {
                             }
                         break;
                     case "map":
-                    case "warp":
-                            try {
-                                    MapleMap target = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(sub[1]));
-                                    if (target == null) {
-                                            player.yellowMessage("Map ID " + sub[1] + " is invalid.");
-                                            return false;
-                                    }
-                                    if (player.getEventInstance() != null) {
-                                            player.getEventInstance().removePlayer(player);
-                                    }
-                                    player.changeMap(target, target.getPortal(0));
-                            } catch (Exception ex) {
+                        try {
+                            MapleMap target = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(sub[1]));
+                            if (target == null) {
                                     player.yellowMessage("Map ID " + sub[1] + " is invalid.");
                                     return false;
                             }
+                            if (player.getEventInstance() != null) {
+                                    player.getEventInstance().removePlayer(player);
+                            }
+                            player.changeMap(target, target.getPortal(0));
+                        } catch (Exception ex) {
+                            player.yellowMessage("Map ID " + sub[1] + " is invalid.");
+                            return false;
+                        }
+                        break;
+                    case "warp":
+                        try {
+                            MapleMap target = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(sub[1]));
+                            if (target == null) {
+                                    player.yellowMessage("Map ID " + sub[1] + " is invalid.");
+                                    return false;
+                            }
+                            if (player.getEventInstance() != null) {
+                                    player.getEventInstance().removePlayer(player);
+                            }
+                            player.changeMap(target, target.getPortal(0));
+                        } catch (Exception ex) {
+                            player.yellowMessage("Map ID " + sub[1] + " is invalid.");
+                            return false;
+                        }
                         break;
                     case "music":
                             if (sub.length < 2) {
