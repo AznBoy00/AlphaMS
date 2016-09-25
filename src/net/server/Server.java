@@ -133,7 +133,7 @@ public class Server implements Runnable {
             System.out.println("Please start create_server.bat");
             System.exit(0);
         }
-
+        
         System.out.println("ArchonMS v" + ServerConstants.VERSION + " starting up.\r\n");
 
 
@@ -185,12 +185,16 @@ public class Server implements Runnable {
                         ServerConstants.DROP_RATE,
                         ServerConstants.MESO_RATE,
                         ServerConstants.BOSS_DROP_RATE);
-
+                //System.out.println("\t\tNew world object created");
                 worldRecommendedList.add(new Pair<>(i, p.getProperty("whyamirecommended" + i)));
+                //System.out.println("\t\twhyamirecommended");
                 worlds.add(world);
+                //System.out.println("\t\tServer added world0");
                 channels.add(new LinkedHashMap<Integer, String>());
+                //System.out.println("\t\tChannels.add DONE");
                 for (int j = 0; j < Integer.parseInt(p.getProperty("channels" + i)); j++) {
                     int channelid = j + 1;
+                    //System.out.println("Channelid" + (j+1));
                     Channel channel = new Channel(i, channelid);
                     world.addChannel(channel);
                     channels.get(i).put(channelid, channel.getIP());
@@ -199,7 +203,8 @@ public class Server implements Runnable {
                 System.out.println("Finished loading world " + i + "\r\n");
             }
         } catch (Exception e) {
-            System.out.println("Error in moople.ini, start CreateINI.bat to re-make the file.");
+            //System.out.println("Error in moople.ini, start CreateINI.bat to re-make the file.");
+            System.out.println("Can you be less of an idiot and make sure the ini file is fine?");
             e.printStackTrace();//For those who get errors
             System.exit(0);
         }

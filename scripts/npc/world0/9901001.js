@@ -31,7 +31,7 @@ function action(mode, type, selection) {
         else
             status--;
         if (status == 0) {
-			cm.sendSimple("#dGreetings! \r \r#bMy name is ^-`JokerstaR, I am an adminitrator on ArchonMS. Our server is full of adventures! Before you leave, I'll give you a super awesome special starter kit! But first, let me know where are you heading to? #b\r\n#L0#I want to explore Maple Island a bit more, take me to the next map!\r\n#L1#I want to skip Maple Island, take me to Lith Harbor!\r\n#L2#Let me think a bit");
+			cm.sendSimple("#dLong training eh?! \r #b \r My name is #r^-`JokerstaR#b, I am an adminitrator on #rArchonMS#b. Our server is full of adventures! Before you leave, I'll give you a super awesome special starter kit! But first, let me know where are you heading to? #b\r\n#L0#I want to explore Maple Island a bit more, take me to the next map!\r\n#L1#I want to skip Maple Island, take me to Lith Harbor!\r\n#L2#Let me think a bit");
 		} else if (status == 1) {
 			if (selection == 0) {
 				if (!cm.getPlayer().getInventory(Packages.client.inventory.MapleInventoryType.EQUIP).isFull(6)) {

@@ -6,8 +6,8 @@ import java.util.Properties;
 public class ServerConstants {
 
     public static short VERSION = 83;
-    public static String[] WORLD_NAMES = {"Scania", "Bera", "Broa", "Windia", "Khaini", "Bellocan", "Mardia", "Kradia", "Yellonde", "Demethos", "Galicia", "El Nido", "Zenith", "Arcenia", "Kastia", "Judis", "Plana", "Kalluna", "Stius", "Croa", "Medere"};
-    ;
+    public static String[] WORLD_NAMES = {"ArchonMS", "Bera", "Broa", "Windia", "Khaini", "Bellocan", "Mardia", "Kradia", "Yellonde", "Demethos", "Galicia", "El Nido", "Zenith", "Arcenia", "Kastia", "Judis", "Plana", "Kalluna", "Stius", "Croa", "Medere"};
+    ;                                       //Scania
 	// Login Configuration
     public static final int CHANNEL_LOAD = 20;//Players per channel
     public static final long RANKING_INTERVAL = 60 * 60 * 1000;//60 minutes, 3600000
@@ -17,9 +17,9 @@ public class ServerConstants {
     // IP Configuration
     public static String HOST;
     //Database Configuration
-    public static String DB_URL = "jdbc:mysql://localhost:3306/archonms?autoReconnect=true";
-    public static String DB_USER = "root";
-    public static String DB_PASS = "";
+    public static String DB_URL;
+    public static String DB_USER;
+    public static String DB_PASS;
     //Other Configuration
     public static boolean JAVA_8;
     public static boolean SHUTDOWNHOOK;
@@ -30,9 +30,9 @@ public class ServerConstants {
     public static final boolean USE_ITEM_SORT = false;
     public static final boolean USE_PARTY_SEARCH = false;
     //Rates
-    public static final int EXP_RATE = 25;
-    public static final int MESO_RATE = 15;
-    public static final int DROP_RATE = 3;
+    public static final int EXP_RATE = 8;
+    public static final int MESO_RATE = 8;
+    public static final int DROP_RATE = 2;
     public static final int BOSS_DROP_RATE = 2;
     public static final int PARTY_EXPERIENCE_MOD = 1; // change for event stuff
 	public static final double PQ_BONUS_EXP_MOD = 0.5;
@@ -54,7 +54,7 @@ public class ServerConstants {
             //OTHER
             ServerConstants.JAVA_8 = p.getProperty("JAVA8").equalsIgnoreCase("TRUE");
             ServerConstants.SHUTDOWNHOOK = p.getProperty("SHUTDOWNHOOK").equalsIgnoreCase("true");
-
+            
         } catch (Exception e) {
             System.out.println("Failed to load configuration.ini.");
             System.exit(0);

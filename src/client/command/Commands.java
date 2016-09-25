@@ -466,19 +466,21 @@ public class Commands {
 		case "rates":
 			c.resetVoteTime();
 			player.setRates();
-			player.yellowMessage("DROP RATE");
-			player.message(">>Total DROP Rate: " + player.getDropRate() + "x");
-
-			player.yellowMessage("MESO RATE");
+                        player.yellowMessage("EXP RATE");
+			player.message(">>EXP Rate: " + player.getExpRate() + "x");
+                        player.yellowMessage("MESO RATE");
 			player.message(">>MESO Rate: " + c.getWorldServer().getMesoRate() + "x");
-			//player.message(">>Guild MESO Rate bonus: " + (player.getGuild() != null ? "1" : "0") + "x");
-			//player.message(">>Total MESO Rate: " + player.getMesoRate() + "x");
-
-			player.yellowMessage("EXP RATE");
-			player.message(">>EXP Rate: " + ServerConstants.EXP_RATE + "x");
 			if(c.getWorldServer().getExpRate() > ServerConstants.EXP_RATE) {
 				player.message(">>Event EXP bonus: " + (c.getWorldServer().getExpRate() - ServerConstants.EXP_RATE) + "x");
 			}
+			player.yellowMessage("DROP RATE");
+			player.message(">>Total DROP Rate: " + player.getDropRate() + "x");
+
+			
+			//player.message(">>Guild MESO Rate bonus: " + (player.getGuild() != null ? "1" : "0") + "x");
+			//player.message(">>Total MESO Rate: " + player.getMesoRate() + "x");
+
+			
 			//player.message(">>Voted EXP bonus: " + (c.hasVotedAlready() ? "1x" : "0x (If you vote now, you will earn an additional 1x EXP!)"));
 			//player.message(">>Total EXP Rate: " + player.getExpRate() + "x");
 			

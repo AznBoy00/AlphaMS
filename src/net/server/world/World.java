@@ -54,7 +54,7 @@ import tools.MaplePacketCreator;
  */
 public class World {
 
-    private int id, flag, exprate, droprate, mesorate, bossdroprate;
+    private int id, flag, exprate = 1000, droprate = 2, mesorate = 8, bossdroprate;
     private String eventmsg;
     private List<Channel> channels = new ArrayList<>();
     private Map<Integer, MapleParty> parties = new HashMap<>();
@@ -110,7 +110,7 @@ public class World {
     }
 
     public void setExpRate(int exp) {
-    	//System.out.println("Setting server EXP Rate to " + exp + "x.");
+    	System.out.println("Setting server EXP Rate to " + exp + "x.");
         this.exprate = exp;
 		for(MapleCharacter chr : getPlayerStorage().getAllCharacters()) {
 			chr.setRates();

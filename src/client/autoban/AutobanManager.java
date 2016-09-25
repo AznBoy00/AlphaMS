@@ -50,7 +50,7 @@ public class AutobanManager {
         if (points.get(fac) >= fac.getMaximum()) {
         	chr.autoban(reason);
             //chr.autoban("Autobanned for " + fac.name() + " ;" + reason, 1);
-            //chr.sendPolice("You have been blocked by #bMooplePolice for the HACK reason#k.");
+            //chr.sendPolice("You have been blocked by #bCENSOREDPolice for the HACK reason#k.");
         }
         
         // Lets log every single point too.
