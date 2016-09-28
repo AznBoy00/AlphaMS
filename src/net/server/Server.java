@@ -134,7 +134,7 @@ public class Server implements Runnable {
             System.exit(0);
         }
         
-        System.out.println("ArchonMS v" + ServerConstants.VERSION + " starting up.\r\n");
+        System.out.println("Initializing ArchonMS v" + ServerConstants.VERSION + "...\r\n");
 
 
         if(ServerConstants.SHUTDOWNHOOK)
@@ -162,22 +162,22 @@ public class Server implements Runnable {
         
         long timeToTake = System.currentTimeMillis();
         SkillFactory.loadAllSkills();
-        System.out.println("Skills loaded in " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + " seconds");
+        System.out.println("Skills loaded in " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + "s");
 
         timeToTake = System.currentTimeMillis();
         MapleItemInformationProvider.getInstance().getAllItems();
 
         CashItemFactory.getSpecialCashItems();
-        System.out.println("Items loaded in " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + " seconds\r\n");
+        System.out.println("Items loaded in " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + "s\r\n");
         
 		timeToTake = System.currentTimeMillis();
 		MapleQuest.loadAllQuest();
-		System.out.println("Quest loaded in " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + " seconds\r\n");
+		System.out.println("Quest loaded in " + ((System.currentTimeMillis() - timeToTake) / 1000.0) + "s\r\n");
 		
 		
         try {
             for (int i = 0; i < Integer.parseInt(p.getProperty("worlds")); i++) {
-                System.out.println("Starting world " + i);
+                System.out.println("Loading world " + i);
                 World world = new World(i,
                         Integer.parseInt(p.getProperty("flag" + i)),
                         p.getProperty("eventmessage" + i),
@@ -200,11 +200,10 @@ public class Server implements Runnable {
                     channels.get(i).put(channelid, channel.getIP());
                 }
                 world.setServerMessage(p.getProperty("servermessage" + i));
-                System.out.println("Finished loading world " + i + "\r\n");
+                System.out.println("Done loading world. " + i + "\r\n");
             }
         } catch (Exception e) {
-            //System.out.println("Error in moople.ini, start CreateINI.bat to re-make the file.");
-            System.out.println("Can you be less of an idiot and make sure the ini file is fine?");
+            System.out.println("Error in .ini file");
             e.printStackTrace();//For those who get errors
             System.exit(0);
         }
@@ -216,9 +215,9 @@ public class Server implements Runnable {
         } catch (IOException ex) {
         }
         
-        System.out.println("Listening on port 8484\r\n\r\n");
+        System.out.println("[Server]Listening on port 8484\r\n\r\n");
 
-        System.out.println("ArchonMS is now online.");
+        System.out.println("[Server]ArchonMS status: online.");
         online = true;
     }
 
@@ -229,7 +228,7 @@ public class Server implements Runnable {
     	} catch (NullPointerException e) {
     		FilePrinter.printError(FilePrinter.EXCEPTION_CAUGHT, e);
     	}
-        System.out.println("Server offline.");
+        System.out.println("[Server]Status: Offline.");
         System.exit(0);// BOEIEND :D
     }
 
@@ -588,13 +587,13 @@ public class Server implements Runnable {
                 worldRecommendedList.clear();
                 worldRecommendedList = null;
 
-                System.out.println("Worlds + Channels are offline.");
+                System.out.println("[Server]World && Channels status: Offline");
                 acceptor.unbind();
                 acceptor = null;
                 if (!restart) {
                     System.exit(0);
                 } else {
-                    System.out.println("\r\nRestarting the server....\r\n");
+                    System.out.println("\r\nRestarting server....\r\n");
                     try {
                         instance.finalize();//FUU I CAN AND IT'S FREE
                     } catch (Throwable ex) {

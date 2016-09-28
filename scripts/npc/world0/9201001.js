@@ -2,7 +2,7 @@
 Credits go to Travis of DeanMS ( xKillsAlotx on RaGEZONE)
 Item Exchanger for scrolls
 
-Modified by SharpAceX (Alan) for MapleSolaxia
+Modified by SharpAceX (Alan)
 */
 
 importPackage(Packages.tools);
@@ -37,7 +37,7 @@ function action(mode, type, selection) {
 					cm.getPlayer().announce(MaplePacketCreator.earnTitleMessage("You have earned 2,000 NX"));
                     cm.gainItem(leaf, -1);
                     cm.sendOk("Here is your 2,000 NX!");
-					cm.logLeaf("5k NX");
+					cm.logLeaf("2k NX");
                 } else {
                     cm.sendOk("Sorry, you don't have a maple leaf!");
 				}

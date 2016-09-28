@@ -1,6 +1,5 @@
 /*
  * Aran / Cygnus Job Advancer
- * v83 MoopleDEV Rev 116
  * Author: ShEtY
  */
 
