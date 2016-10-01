@@ -354,6 +354,8 @@ public class MapleGuild {
                 }
             }
         }
+        if (mgc.getAid() > 0)
+            MapleAlliance.loadAlliance(mgc.getAid());
         this.broadcast(MaplePacketCreator.newGuildMember(mgc));
         return 1;
     }

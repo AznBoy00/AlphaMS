@@ -30,8 +30,8 @@ public class ServerConstants {
     public static final boolean USE_ITEM_SORT = false;
     public static final boolean USE_PARTY_SEARCH = false;
     //Rates
-    public static final int EXP_RATE = 8;
-    public static final int MESO_RATE = 8;
+    public static final int EXP_RATE = 24;
+    public static final int MESO_RATE = 16;
     public static final int DROP_RATE = 2;
     public static final int BOSS_DROP_RATE = 2;
     public static final int PARTY_EXPERIENCE_MOD = 1; // change for event stuff

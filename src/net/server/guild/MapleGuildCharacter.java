@@ -33,6 +33,7 @@ public class MapleGuildCharacter {
     private int allianceRank;
     private boolean online;
     private String name;
+    private int aid;
 
     public MapleGuildCharacter(MapleCharacter c) {
         this.name = c.getName();
@@ -45,6 +46,7 @@ public class MapleGuildCharacter {
         this.guildid = c.getGuildId();
         this.online = true;
         this.allianceRank = c.getAllianceRank();
+        this.aid = c.getGuild().getAllianceId();
     }
 
     public MapleGuildCharacter(int _id, int _lv, String _name, int _channel, int _world, int _job, int _rank, int _gid, boolean _on, int _allianceRank) {
@@ -128,6 +130,14 @@ public class MapleGuildCharacter {
 
     public int getAllianceRank() {
         return allianceRank;
+    }
+
+    public int getAid() {
+        return aid;
+    }
+
+    public void setAid(int aid) {
+        this.aid = aid;
     }
 
     @Override

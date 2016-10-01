@@ -2809,7 +2809,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
         } else if (level == 195) {
             yellowMessage("Nothing is stopping you at this point, level 195!");
         } else if (level == 200) {
-            yellowMessage("Your drop rate has increased to 4x since you have reached level 200!");
+            yellowMessage("Congratulations! You are now level 200!");
         }
     }
 

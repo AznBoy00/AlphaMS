@@ -51,9 +51,14 @@ function action(mode, type, selection) {
                 cm.sendYesNo("Oh, are you interested in forming a Guild Union?");
         } else if (selection == 3) {
             var rank = cm.getPlayer().getMGC().getAllianceRank();
-            if (rank == 1)
-                cm.sendOk("Not done yet"); //ExpandGuild Text
-            else {
+            if (rank == 1 && partymembers.get(0).getGuild!=null && partymembers.get(1).getGuild!=null) {
+                //cm.sendOk("Not done yet"); //ExpandGuild Text
+				if (cm.expandAlliance(partymembers.get(0), partymembers.get(1)))
+					cm.sendOk("Expanded alliance.");
+				else
+					cm.sendOk("NOT SUCCESSFUL FUCK!");
+				cm.dispose();
+            } else {
                 cm.sendNext("Only the Guild Union Master can expand the number of guilds in the Union.");
                 cm.dispose();
             }

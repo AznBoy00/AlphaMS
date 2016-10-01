@@ -51,6 +51,18 @@ public class MapleAlliance {
             rankTitles[i] = ranks[i];
         }
     }
+    
+    //added additional constructor to enable multiple alliances
+    public MapleAlliance(String name, int id, int g1, int g2, int g3, int g4, int g5) {
+        this.name = name;
+        allianceId = id;
+        int[] guild = {g1, g2, g3, g4, g5};
+        String[] ranks = {"Master", "Jr.Master", "Member", "Member", "Member"};
+        for (int i = 0; i < 5; i++) {
+            guilds[i] = guild[i];
+            rankTitles[i] = ranks[i];
+        }
+    }
 
     public static MapleAlliance loadAlliance(int id) {
         if (id <= 0) {
@@ -119,7 +131,7 @@ public class MapleAlliance {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int avail = -1;
-                for (int i = 1; i <= 5; i++) {
+                for (int i = 1; i <= 5; i++) { 
                     int guildId = rs.getInt("guild" + i);
                     if (add) {
                         if (guildId == -1) {
@@ -148,6 +160,19 @@ public class MapleAlliance {
         } catch (SQLException e) {
         }
         return ret;
+    }
+    
+    //I couldn't understand this ^ method so made my own readable shit
+    public boolean expandAlliance(int gid) {
+        //THIS ONLY EXPANDS ALLIANCE OBJECT, DON'T FORGET TO SAVE DB
+        for (int i = 0; i < 5; i++) {
+            if (guilds[i] == -1) {
+                guilds[i] = gid;
+                this.increaseCapacity(1);
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean removeGuild(int gid) {

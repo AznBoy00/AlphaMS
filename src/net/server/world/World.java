@@ -54,7 +54,7 @@ import tools.MaplePacketCreator;
  */
 public class World {
 
-    private int id, flag, exprate = 1000, droprate = 2, mesorate = 8, bossdroprate;
+    private int id, flag, exprate, droprate, mesorate, bossdroprate;
     private String eventmsg;
     private List<Channel> channels = new ArrayList<>();
     private Map<Integer, MapleParty> parties = new HashMap<>();

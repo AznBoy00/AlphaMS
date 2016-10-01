@@ -335,6 +335,7 @@ public class Commands {
 			player.message("@bosshp: Displays the remaining HP of the bosses on your map.");
                         player.message("@spinel: Where do you want to go? She will bring you there!");
                         player.message("@potshop: Quick access to our remote potion shop!");
+                        player.message("@terran, @protoss, @zerg: Get information of our 3 clans available to join in ArchonMS.");
 			break;
 		case "time":
 			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -601,8 +602,9 @@ public class Commands {
                 case "spinel":
                     if (player.isBeginnerJob()) {
                         player.dropMessage("You cannot use this command as a beginner! But you can go see Spinel in any town! Happy Mapling!");
+                    } else {
+                        NPCScriptManager.getInstance().start(c, 9000020, null, null);
                     }
-                    NPCScriptManager.getInstance().start(c, 9000020, null, null);
                     break;
                 case "potshop":
                     MapleShopFactory.getInstance().getShop(6129).sendShop(c);
@@ -631,6 +633,21 @@ public class Commands {
 				}
 			}
 			break;
+                case "terran":
+                    player.dropMessage("The Terrans have a wide variety of techs!");
+                    player.dropMessage("Here are the commands and features available to the Raynor Faction:");
+                    player.dropMessage("TBA");
+                    break;
+                case "protoss":
+                    player.dropMessage("The Protoss is a highly technological advanced race!");
+                    player.dropMessage("Here are the commands and features available to the Warriors of Aiur:");
+                    player.dropMessage("TBA");
+                    break;
+                case "zerg":
+                    player.dropMessage("The Zerg is an extraterestrial race that swarms their enemies by outnumbering them!");
+                    player.dropMessage("Here are the commands and features available to the Kerrigan Swarm:");
+                    player.dropMessage("TBA");
+                    break;
 		default:
 			if (player.gmLevel() == 0) {
 				player.yellowMessage("Player Command " + heading + sub[0] + " does not exist, see @help for a list of commands.");

@@ -60,6 +60,7 @@ import client.inventory.ItemFactory;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.ExpTable;
+import java.sql.Connection;
 
 /**
  *
@@ -394,7 +395,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 		}
 	}
 
-	public static MapleAlliance createAlliance(MapleCharacter chr1, MapleCharacter chr2, String name) {
+	public MapleAlliance createAlliance(MapleCharacter chr1, MapleCharacter chr2, String name) {
 		int id;
 		int guild1 = chr1.getGuildId();
 		int guild2 = chr2.getGuildId();
@@ -423,10 +424,63 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 			chr2.saveGuildStatus();
 			Server.getInstance().addAlliance(id, alliance);
 			Server.getInstance().allianceMessage(id, MaplePacketCreator.makeNewAlliance(alliance, chr1.getClient()), -1, -1);
+                        Server.getInstance().allianceMessage(id, MaplePacketCreator.makeNewAlliance(alliance, chr2.getClient()), -1, -1);
 		} catch (Exception e) {
 			return null;
 		}
 		return alliance;
+	}
+        
+        public MapleAlliance expandAlliance(MapleCharacter chr1, MapleCharacter chr2) {
+		int guild1 = chr1.getGuildId();
+		int guild2 = chr2.getGuildId();
+                int id = chr1.getGuild().getAllianceId();
+                String query = "select * from alliance where id=?;";
+                Connection con = null;
+                PreparedStatement ps = null;
+                ResultSet rs = null;
+                MapleAlliance alliance = null;
+                try {
+                    con = DatabaseConnection.getConnection();
+                    ps = con.prepareStatement(query);
+                    ps.setInt(1, id);
+                    rs = ps.executeQuery();
+                    if (rs.next()) {
+                        alliance = new MapleAlliance(rs.getString("name"), id, rs.getInt("guild1"), rs.getInt("guild2"), rs.getInt("guild3"), rs.getInt("guild4"), rs.getInt("guild5"));
+                    } else {
+                        System.out.println("no alliance found where id = " + id);
+                    }
+                } catch (SQLException sqle) {
+                    System.out.println("something fucked up at getting alliance details...");
+                } finally {
+                    try {
+                        ps.close();
+                        rs.close();
+                        con.close();
+                    } catch (Exception e) {
+                        System.out.println("Couldn't close connection, might not have even connected to db at first...");
+                    }
+                }
+                if (alliance != null) {
+                    alliance.expandAlliance(guild2);
+                    alliance.saveToDB();
+                    try {
+			Server.getInstance().setGuildAllianceId(guild1, id);
+			Server.getInstance().setGuildAllianceId(guild2, id);
+			chr1.setAllianceRank(1);
+			chr1.saveGuildStatus();
+			chr2.setAllianceRank(2);
+			chr2.saveGuildStatus();
+			Server.getInstance().addAlliance(id, alliance);
+			Server.getInstance().allianceMessage(id, MaplePacketCreator.makeNewAlliance(alliance, chr1.getClient()), -1, -1);
+                        Server.getInstance().allianceMessage(id, MaplePacketCreator.makeNewAlliance(alliance, chr2.getClient()), -1, -1);
+                    } catch (Exception e) {
+                        System.out.println("So uhm, server sync fked up i think...");
+			return alliance;
+                    }
+                }
+		
+		return null;
 	}
 
 	public boolean hasMerchant() {

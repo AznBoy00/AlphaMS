@@ -107,13 +107,13 @@ public class MapleMapItem extends AbstractMapleMapObject {
 	this.pickedUp = pickedUp;
     }
 	
-	public long getDropTime() {
-		return dropTime;
-	}
-	
-	public void setDropTime(long time) {
-		this.dropTime  = time;
-	}
+    public long getDropTime() {
+            return dropTime;
+    }
+
+    public void setDropTime(long time) {
+            this.dropTime  = time;
+    }
 
     public byte getDropType() {
 	return type;
