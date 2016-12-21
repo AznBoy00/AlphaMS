@@ -266,6 +266,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
     private PartyQuest partyQuest = null;
     private boolean loggedIn = false;
     private MapleDragon dragon = null;
+    
+    //Boss Quest
+    private int bossPoints;
 
     private MapleCharacter() {
         setStance(0);
@@ -2889,6 +2892,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
                 ret.mgc = new MapleGuildCharacter(ret);
             }
             int buddyCapacity = rs.getInt("buddyCapacity");
+            ret.bossPoints = rs.getInt("bosspoints");
             ret.buddylist = new BuddyList(buddyCapacity);
             ret.getInventory(MapleInventoryType.EQUIP).setSlotLimit(rs.getByte("equipslots"));
             ret.getInventory(MapleInventoryType.USE).setSlotLimit(rs.getByte("useslots"));
@@ -3808,7 +3812,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
             con.setAutoCommit(false);
             PreparedStatement ps;
-            ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, gachaexp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, map = ?, meso = ?, hpMpUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, messengerid = ?, messengerposition = ?, mountlevel = ?, mountexp = ?, mounttiredness= ?, equipslots = ?, useslots = ?, setupslots = ?, etcslots = ?,  monsterbookcover = ?, vanquisherStage = ?, dojoPoints = ?, lastDojoStage = ?, finishedDojoTutorial = ?, vanquisherKills = ?, matchcardwins = ?, matchcardlosses = ?, matchcardties = ?, omokwins = ?, omoklosses = ?, omokties = ?, dataString = ? WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
+            ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, gachaexp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, map = ?, meso = ?, hpMpUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, messengerid = ?, messengerposition = ?, mountlevel = ?, mountexp = ?, mounttiredness= ?, equipslots = ?, useslots = ?, setupslots = ?, etcslots = ?,  monsterbookcover = ?, vanquisherStage = ?, dojoPoints = ?, lastDojoStage = ?, finishedDojoTutorial = ?, vanquisherKills = ?, matchcardwins = ?, matchcardlosses = ?, matchcardties = ?, omokwins = ?, omoklosses = ?, omokties = ?, bosspoints = ?, dataString = ? WHERE id = ?", Statement.RETURN_GENERATED_KEYS);
             if (gmLevel < 1 && level > 199) {
                 ps.setInt(1, isCygnus() ? 120 : 200);
             } else {
@@ -3900,8 +3904,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             ps.setInt(45, omokwins);
             ps.setInt(46, omoklosses);
             ps.setInt(47, omokties);
-            ps.setString(48, dataString);
-            ps.setInt(49, id);
+            ps.setInt(48, bossPoints);
+            ps.setString(49, dataString);
+            ps.setInt(50, id);
 
             int updateRows = ps.executeUpdate();
             if (updateRows < 1) {
@@ -5280,5 +5285,62 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject {
             }
         }
         return sp;
+    }
+    
+    //Boss Quest
+    
+    public void setBossPoints(int points) {
+        bossPoints = points;
+    }
+    public int getBossPoints() {
+        return bossPoints;
+    }
+    
+    public void gainItem(int id, int quantity) {
+        gainItem(id, (short) quantity, false, true);
+    }
+
+    public boolean gainItem(int id, short quantity, boolean randomStats, boolean show) {
+        if (quantity >= 0) {
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+            Item item = ii.getEquipById(id);
+            MapleInventoryType type = ii.getInventoryType(id);
+            if (type.equals(MapleInventoryType.EQUIP) && !ItemConstants.isThrowingStar(item.getItemId()) && !ItemConstants.isBullet(item.getItemId())) {
+                if (!getInventory(type).isFull()) {
+                    if (randomStats) {
+                        MapleInventoryManipulator.addFromDrop(getClient(), ii.randomizeStats((Equip) item), false);
+                    } else {
+                        MapleInventoryManipulator.addFromDrop(getClient(), (Equip) item, false);
+                    }
+                } else {
+
+                    dropMessage(1, "Your inventory is full. Please remove an item from your " + type.name().toLowerCase() + " inventory.");
+                    return false;
+                }
+            } else if (MapleInventoryManipulator.checkSpace(getClient(), id, quantity, "")) {
+                if (id >= 5000000 && id <= 5000100) {
+                    if (quantity > 1) {
+                        quantity = 1;
+                    }
+                    int petId = MaplePet.createPet(id);
+                    MapleInventoryManipulator.addById(getClient(), id, (short) 1, null, petId);
+                    if (show) {
+                        this.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, quantity));
+                    }
+                } else {
+                    MapleInventoryManipulator.addById(getClient(), id, quantity);
+                }
+            } else {
+
+                dropMessage(1, "Your inventory is full. Please remove an item from your " + type.name().toLowerCase() + " inventory.");
+                return false;
+            }
+            if (show) {
+                this.getClient().getSession().write(MaplePacketCreator.getShowItemGain(id, quantity, true));
+            }
+        } else {
+            MapleInventoryManipulator.removeById(getClient(), MapleItemInformationProvider.getInstance().getInventoryType(id), id, -quantity, false, false);
+        }
+        return true;
     }
 }

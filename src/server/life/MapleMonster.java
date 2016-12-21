@@ -64,6 +64,7 @@ import tools.Randomizer;
 
 public class MapleMonster extends AbstractLoadedMapleLife {
 
+    private MapleMonsterStats overrideStats;
     private MapleMonsterStats stats;
     private int hp, mp;
     private WeakReference<MapleCharacter> controller = new WeakReference<>(null);
@@ -948,5 +949,11 @@ public class MapleMonster extends AbstractLoadedMapleLife {
 
     public Map<MonsterStatus, MonsterStatusEffect> getStati() {
         return stati;
+    }
+    
+    //Custom
+    
+    public void setOverrideStats(MapleMonsterStats overrideStats) {
+        this.overrideStats = overrideStats;
     }
 }

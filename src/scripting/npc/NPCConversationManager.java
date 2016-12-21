@@ -55,12 +55,16 @@ import client.MapleSkinColor;
 import client.MapleStat;
 import client.Skill;
 import client.SkillFactory;
+import client.inventory.Equip;
 import client.inventory.Item;
 import client.inventory.ItemFactory;
+import client.inventory.MapleInventory;
 import client.inventory.MapleInventoryType;
 import client.inventory.MaplePet;
 import constants.ExpTable;
 import java.sql.Connection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -570,4 +574,57 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 		dispose();
 		return true;
 	}
+        
+        // Custom
+        
+        public void gainEpicItem (byte slot, MapleCharacter player, short str, short dex, short Int, short luk, short wa, short ma) {
+            MapleInventory equip = player.getInventory(MapleInventoryType.EQUIP);
+            Equip eu = (Equip) equip.getItem(slot);
+            int item = equip.getItem(slot).getItemId();
+            short hand = eu.getHands();
+            byte level = eu.getLevel();
+            Equip nItem = new Equip(item, equip.getNextFreeSlot());
+            nItem.setStr(str); // STR
+            nItem.setDex(dex); // DEX
+            nItem.setInt(Int); // INT
+            nItem.setLuk(luk); //LUK
+            nItem.setWatk(wa);
+            nItem.setMatk(ma);
+            nItem.setUpgradeSlots(nItem.getUpgradeSlots()); // Can Upgrade amount
+            nItem.setHands(hand);
+            nItem.setLevel(level);
+            player.getInventory(MapleInventoryType.EQUIP).removeItem(slot);
+            player.getInventory(MapleInventoryType.EQUIP).addItem(nItem);
+        }
+
+        public int getItemID(byte slot) {
+            MapleInventory equip = getPlayer().getInventory(MapleInventoryType.EQUIP);
+            Equip eu = (Equip) equip.getItem(slot);
+            return equip.getItem(slot).getItemId();
+        }
+
+        public Equip getEquip(byte slot) {
+            MapleInventory equip = getPlayer().getInventory(MapleInventoryType.EQUIP);
+            Equip eu = (Equip) equip.getItem(slot);
+            return eu;
+        }
+
+        public String EquipList(MapleClient c) {
+            StringBuilder str = new StringBuilder();
+            MapleInventory equip = c.getPlayer().getInventory(MapleInventoryType.EQUIP);
+            List<String> stra = new LinkedList<String>();
+            for (Item item : equip.list()) {
+                stra.add("#L"+item.getPosition()+"##v"+item.getItemId()+"##l");
+            }
+            for (String strb : stra) {
+                str.append(strb);
+            }
+            return str.toString();
+        }
+
+        public void reloadChar() {
+            getPlayer().getClient().getSession().write(MaplePacketCreator.getCharInfo(getPlayer()));
+            getPlayer().getMap().removePlayer(getPlayer());
+            getPlayer().getMap().addPlayer(getPlayer());
+        }
 }

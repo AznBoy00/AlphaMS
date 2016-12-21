@@ -83,12 +83,14 @@ public enum AutobanFactory {
 	}
 	
 	public void alert(MapleCharacter chr, String reason) {
+            if (!chr.isGM()) {
 		FilePrinter.printError("autobanwarning.txt", (chr != null ? MapleCharacter.makeMapleReadable(chr.getName()) : "") + " caused " + this.name() + " " + reason + "\r\n");
 		if (chr != null && MapleLogger.ignored.contains(chr.getName())){
 			return;
 		}
 		Server.getInstance().broadcastGMMessage(MaplePacketCreator.sendYellowTip((chr != null ? MapleCharacter.makeMapleReadable(chr.getName()) : "") + " caused " + this.name() + " " + reason));
-	}
+	        }
+        }
 	
 
 	public void autoban(MapleCharacter chr, String value) {

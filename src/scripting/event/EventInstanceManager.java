@@ -184,7 +184,7 @@ public class EventInstanceManager {
 	public void monsterKilled(MapleCharacter chr, MapleMonster mob) {
 		try {
 			Integer kc = killCount.get(chr);
-			int inc = ((Double) em.getIv().invokeFunction("monsterValue", this, mob.getId())).intValue();
+			int inc = (int)(em.getIv().invokeFunction("monsterValue", this, mob.getId()));
 			if (kc == null) {
 				kc = inc;
 			} else {
@@ -209,20 +209,20 @@ public class EventInstanceManager {
 	}
 
 	public void dispose() {
-        try {
-            em.getIv().invokeFunction("dispose", this);
-        } catch (ScriptException | NoSuchMethodException ex) {
-            ex.printStackTrace();
-        }
-        chars.clear();
-        mobs.clear();
-        killCount.clear();
-        mapFactory = null;
-        if (expedition != null) {
-                em.getChannelServer().getExpeditions().remove(expedition);
-        }
-        em.disposeInstance(name);
-        em = null;
+            try {
+                em.getIv().invokeFunction("dispose", this);
+            } catch (ScriptException | NoSuchMethodException ex) {
+                ex.printStackTrace();
+            }
+            chars.clear();
+            mobs.clear();
+            killCount.clear();
+            mapFactory = null;
+            if (expedition != null) {
+                    em.getChannelServer().getExpeditions().remove(expedition);
+            }
+            em.disposeInstance(name);
+            em = null;
 	}
 
 	public MapleMapFactory getMapFactory() {
@@ -322,4 +322,25 @@ public class EventInstanceManager {
 	public boolean isLeader(MapleCharacter chr) {
 		return (chr.getParty().getLeader().getId() == chr.getId());
 	}
+        
+        // Boss Quest
+        
+        public void saveAllBossQuestPoints(int bossPoints) {
+            for (MapleCharacter character : chars) {
+                int points = character.getBossPoints();
+                character.setBossPoints(points + bossPoints);
+            }
+        }
+    
+        public void saveBossQuestPoints(int bossPoints, MapleCharacter character) {
+            int points = character.getBossPoints();
+            character.setBossPoints(points + bossPoints);
+        }
+
+        public void giveBossQuestReward() {
+            for (MapleCharacter character : chars) {
+                character.gainItem(2022179, (short) 1, false, false);
+                character.dropMessage(5, "You have gained an Onyx Apple for completing this quest.");
+            }
+        }
 }

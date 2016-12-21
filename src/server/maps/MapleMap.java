@@ -133,6 +133,9 @@ public class MapleMap {
     private final WriteLock chrWLock;
     private final ReadLock objectRLock;
     private final WriteLock objectWLock;
+    //custom
+    private int timeMobId;
+    private String timeMobMessage = "";
 
     public MapleMap(int mapid, int world, int channel, int returnMapId, float monsterRate) {
         this.mapid = mapid;
@@ -2378,5 +2381,23 @@ public class MapleMap {
 
     public short getMobInterval() {
         return mobInterval;
+    }
+    
+    //Custom
+    
+    public void setTimeMobId(int id) {
+        this.timeMobId = id;
+    }
+    
+    public int getTimeMobId() {
+        return timeMobId;
+    }
+    
+    public void setTimeMobMessage(String message) {
+        this.timeMobMessage = message;
+    }
+
+    public String getTimeMobMessage() {
+        return timeMobMessage;
     }
 }

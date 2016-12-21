@@ -30,6 +30,7 @@ function action(mode, type, selection) {
 		return;
 	} else
 		status--;
+		cm.dispose();
 	if (status == 0) {
 		if (cm.getMapId() == 922010800) {
 			if (selection == 0) {
@@ -38,7 +39,8 @@ function action(mode, type, selection) {
 				cm.dispose();
 			} else {
 				cm.sendYesNo("You'll have to start over from scratch if you want to take a crack at this quest after leaving this stage. Are you sure you want to leave this map?");
-			}
+				cm.dispose();
+			}			
 		} else {
 			var eim = cm.getPlayer().getEventInstance();
 			if(eim != null) {

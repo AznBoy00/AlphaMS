@@ -65,6 +65,8 @@ public class EventManager {
             ex.printStackTrace();
         } catch (NoSuchMethodException ex) {
             ex.printStackTrace();
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
         }
     }
 

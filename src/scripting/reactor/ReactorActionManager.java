@@ -158,4 +158,10 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
     public void spawnFakeMonster(int id) {
         reactor.getMap().spawnFakeMonsterOnGroundBelow(MapleLifeFactory.getMonster(id), getPosition());
     }
+    
+    
+    //Fix
+    public void killMonster(int monsId) {
+        reactor.getMap().killMonster(monsId);
+    }
 }

@@ -244,6 +244,169 @@ public class MapleMapFactory {
         }
         return map;
     }
+    
+    public MapleMap getMap(int mapid, boolean respawns, boolean npcs, boolean reactors) {
+        Integer omapid = Integer.valueOf(mapid);
+        MapleMap map = maps.get(omapid);
+        if (map == null) {
+            synchronized (this) {
+                map = maps.get(omapid);
+                if (map != null) {
+                    return map;
+                }
+                String mapName = getMapName(mapid);
+                MapleData mapData = source.getData(mapName);
+                String link = MapleDataTool.getString(mapData.getChildByPath("info/link"), "");
+                if (!link.equals("")) { //nexon made hundreds of dojo maps so to reduce the size they added links.
+                    mapName = getMapName(Integer.parseInt(link));
+                    mapData = source.getData(mapName);
+                }
+                float monsterRate = 0;
+                if (respawns) {
+                    MapleData mobRate = mapData.getChildByPath("info/mobRate");
+                    if (mobRate != null) {
+                        monsterRate = ((Float) mobRate.getData()).floatValue();
+                    }
+                }
+                map = new MapleMap(mapid, world, channel, MapleDataTool.getInt("info/returnMap", mapData), monsterRate);
+                map.setOnFirstUserEnter(MapleDataTool.getString(mapData.getChildByPath("info/onFirstUserEnter"), String.valueOf(mapid)));
+                map.setOnUserEnter(MapleDataTool.getString(mapData.getChildByPath("info/onUserEnter"), String.valueOf(mapid)));
+                map.setTimeMobId(MapleDataTool.getInt(mapData.getChildByPath("info/timeMob/id"), -1));
+                map.setTimeMobMessage(MapleDataTool.getString(mapData.getChildByPath("info/timeMob/message"), ""));
+                map.setFieldLimit(MapleDataTool.getInt(mapData.getChildByPath("info/fieldLimit"), 0));
+                PortalFactory portalFactory = new PortalFactory();
+                for (MapleData portal : mapData.getChildByPath("portal")) {
+                    map.addPortal(portalFactory.makePortal(MapleDataTool.getInt(portal.getChildByPath("pt")), portal));
+                }
+                List<MapleFoothold> allFootholds = new LinkedList<MapleFoothold>();
+                Point lBound = new Point();
+                Point uBound = new Point();
+                for (MapleData footRoot : mapData.getChildByPath("foothold")) {
+                    for (MapleData footCat : footRoot) {
+                        for (MapleData footHold : footCat) {
+                            int x1 = MapleDataTool.getInt(footHold.getChildByPath("x1"));
+                            int y1 = MapleDataTool.getInt(footHold.getChildByPath("y1"));
+                            int x2 = MapleDataTool.getInt(footHold.getChildByPath("x2"));
+                            int y2 = MapleDataTool.getInt(footHold.getChildByPath("y2"));
+                            MapleFoothold fh = new MapleFoothold(new Point(x1, y1), new Point(x2, y2), Integer.parseInt(footHold.getName()));
+                            fh.setPrev(MapleDataTool.getInt(footHold.getChildByPath("prev")));
+                            fh.setNext(MapleDataTool.getInt(footHold.getChildByPath("next")));
+                            if (fh.getX1() < lBound.x) {
+                                lBound.x = fh.getX1();
+                            }
+                            if (fh.getX2() > uBound.x) {
+                                uBound.x = fh.getX2();
+                            }
+                            if (fh.getY1() < lBound.y) {
+                                lBound.y = fh.getY1();
+                            }
+                            if (fh.getY2() > uBound.y) {
+                                uBound.y = fh.getY2();
+                            }
+                            allFootholds.add(fh);
+                        }
+                    }
+                }
+                MapleFootholdTree fTree = new MapleFootholdTree(lBound, uBound);
+                for (MapleFoothold fh : allFootholds) {
+                    fTree.insert(fh);
+                }
+                map.setFootholds(fTree);
+                if (mapData.getChildByPath("area") != null) {
+                    for (MapleData area : mapData.getChildByPath("area")) {
+                        int x1 = MapleDataTool.getInt(area.getChildByPath("x1"));
+                        int y1 = MapleDataTool.getInt(area.getChildByPath("y1"));
+                        int x2 = MapleDataTool.getInt(area.getChildByPath("x2"));
+                        int y2 = MapleDataTool.getInt(area.getChildByPath("y2"));
+                        map.addMapleArea(new Rectangle(x1, y1, (x2 - x1), (y2 - y1)));
+                    }
+                }
+                try {
+                    Connection con = DatabaseConnection.getConnection();
+                    PreparedStatement ps = con.prepareStatement("SELECT * FROM spawns WHERE mid = ?");
+                    ps.setInt(1, omapid);
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        int id = rs.getInt("idd");
+                        int f = rs.getInt("f");
+                        boolean hide = false;
+                        String type = rs.getString("type");
+                        int fh = rs.getInt("fh");
+                        int cy = rs.getInt("cy");
+                        int rx0 = rs.getInt("rx0");
+                        int rx1 = rs.getInt("rx1");
+                        int x = rs.getInt("x");
+                        int y = rs.getInt("y");
+                        int mobTime = rs.getInt("mobtime");
+
+                        AbstractLoadedMapleLife myLife = loadLife(id, f, hide, fh, cy, rx0, rx1, x, y, type);
+
+                        if (npcs || type.equals("n")) {
+                            map.addMapObject(myLife);
+                        } else if (type.equals("m")) {
+                            MapleMonster monster = (MapleMonster) myLife;
+                            map.addMonsterSpawn(monster, mobTime, 0);
+                        }
+                    }
+                    ps.close();
+                    rs.close();
+                    ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM playernpcs WHERE map = ?");
+                    ps.setInt(1, omapid);
+                    rs = ps.executeQuery();
+                    while (rs.next()) {
+                        map.addMapObject(new PlayerNPCs(rs));
+                    }
+                    rs.close();
+                    ps.close();
+                } catch (Exception e) {
+                }
+                for (MapleData life : mapData.getChildByPath("life")) {
+                    String id = MapleDataTool.getString(life.getChildByPath("id"));
+                    String type = MapleDataTool.getString(life.getChildByPath("type"));
+                    AbstractLoadedMapleLife myLife = loadLife(life, id, type);
+                    if (myLife instanceof MapleMonster) {
+                        MapleMonster monster = (MapleMonster) myLife;
+                        int mobTime = MapleDataTool.getInt("mobTime", life, 0);
+                        if (mobTime == -1) //does not respawn, force spawn once
+                        {
+                            map.spawnMonster(monster);
+                        } else {
+                            map.addMonsterSpawn(monster, mobTime, 0);
+                        }
+                    } else {
+                        map.addMapObject(myLife);
+                    }
+                }
+                if (reactors && mapData.getChildByPath("reactor") != null) {
+                    for (MapleData reactor : mapData.getChildByPath("reactor")) {
+                        String id = MapleDataTool.getString(reactor.getChildByPath("id"));
+                        if (id != null) {
+                            MapleReactor newReactor = loadReactor(reactor, id);
+                            map.spawnReactor(newReactor);
+                        }
+                    }
+                }
+                try {
+                    map.setMapName(MapleDataTool.getString("mapName", nameData.getChildByPath(getMapStringName(omapid)), ""));
+                    map.setStreetName(MapleDataTool.getString("streetName", nameData.getChildByPath(getMapStringName(omapid)), ""));
+                } catch (Exception e) {
+                    map.setMapName("");
+                    map.setStreetName("");
+                }
+                map.setClock(mapData.getChildByPath("clock") != null);
+                map.setEverlast(mapData.getChildByPath("everlast") != null);
+                map.setTown(mapData.getChildByPath("town") != null);
+                map.setHPDec(MapleDataTool.getIntConvert("decHP", mapData, 0));
+                map.setHPDecProtect(MapleDataTool.getIntConvert("protectItem", mapData, 0));
+                map.setForcedReturnMap(MapleDataTool.getInt(mapData.getChildByPath("info/forcedReturn"), 999999999));
+                map.setBoat(mapData.getChildByPath("shipObj") != null);
+                map.setTimeLimit(MapleDataTool.getIntConvert("timeLimit", mapData.getChildByPath("info"), -1));
+                map.setFieldType(MapleDataTool.getIntConvert("info/fieldType", mapData, 0));
+                maps.put(omapid, map);
+            }
+        }
+        return map;
+    }
 
     public boolean isMapLoaded(int mapId) {
         return maps.containsKey(mapId);
@@ -339,5 +502,17 @@ public class MapleMapFactory {
 
     public Map<Integer, MapleMap> getMaps() {
         return maps;
+    }
+    
+    private AbstractLoadedMapleLife loadLife(int id, int f, boolean hide, int fh, int cy, int rx0, int rx1, int x, int y, String type) {
+        AbstractLoadedMapleLife myLife = MapleLifeFactory.getLife(id, type);
+        myLife.setCy(cy);
+        myLife.setF(f);
+        myLife.setFh(fh);
+        myLife.setRx0(rx0);
+        myLife.setRx1(rx1);
+        myLife.setPosition(new Point(x, y));
+        myLife.setHide(hide);
+        return myLife;
     }
 }

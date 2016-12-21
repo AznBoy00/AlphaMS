@@ -8,7 +8,7 @@
 var status = 0;
 var minLevel = 35; // according to Nexon it's 30, but it's actually a 50 requirement.
 var maxLevel = 200;
-var minPartySize = 5;
+var minPartySize = 3;
 var maxPartySize = 6;
 
 var brokenGlassesCount = 0; // code custom quest data is on the todo list

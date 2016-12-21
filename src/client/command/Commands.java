@@ -1390,7 +1390,10 @@ public class Commands {
 			}
 			break;
                     case "horntail":
-			player.getMap().spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(8810026), player.getPosition());
+                        for (int i = 8810002; i < 8810010; i++) {
+                            player.getMap().spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(i), player.getPosition());
+                        }
+			//player.getMap().spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(8810026), player.getPosition());
 			break;
                     case "job":
 			if (sub.length == 2) {
