@@ -59,6 +59,8 @@ public class EventInstanceManager {
 	private long timeStarted = 0;
 	private long eventTime = 0;
 	private MapleExpedition expedition = null;
+        //Custom
+        private boolean disposed = false;
 
 	public EventInstanceManager(EventManager em, String name) {
 		this.em = em;
@@ -223,6 +225,7 @@ public class EventInstanceManager {
             }
             em.disposeInstance(name);
             em = null;
+            Runtime.getRuntime().gc();
 	}
 
 	public MapleMapFactory getMapFactory() {
@@ -311,14 +314,17 @@ public class EventInstanceManager {
 		}
 	}
 
-	public void removePlayer(MapleCharacter chr) {
-		try {
-			em.getIv().invokeFunction("playerExit", this, chr);
-		} catch (ScriptException | NoSuchMethodException ex) {
-			ex.printStackTrace();
-		}
-	}
-
+	public final void removePlayer(final MapleCharacter chr) {
+            if (disposed) {
+                return;
+            }
+            try {
+                em.getIv().invokeFunction("playerExit", this, chr);
+            } catch (NoSuchMethodException | ScriptException ex) {
+                System.out.println("Event name" + em.getName() + ", Instance name : " + name + ", method Name : playerExit:\n" + ex);
+            }
+        }
+        
 	public boolean isLeader(MapleCharacter chr) {
 		return (chr.getParty().getLeader().getId() == chr.getId());
 	}

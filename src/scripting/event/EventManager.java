@@ -39,6 +39,8 @@ import server.TimerManager;
 import server.expeditions.MapleExpedition;
 import server.maps.MapleMap;
 import client.MapleCharacter;
+import server.life.MapleLifeFactory;
+import server.life.MapleMonster;
 
 /**
  *
@@ -199,5 +201,10 @@ public class EventManager {
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(EventManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    //For BossPQ
+    public MapleMonster getMonster(final int id) {
+        return MapleLifeFactory.getMonster(id);
     }
 }
